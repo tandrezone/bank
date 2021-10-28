@@ -46,23 +46,27 @@ class bankBalance extends Command
         $table = [];
         $totalPrice = 0;
         $totalGain = 0;
+        $totalBuy = 0;
         foreach ($assets as $asset) {
-            $coinPrice = 1;
             if(in_array($asset->coin,crypto::KNOWN_SYMBOLS)) {
-                $coinPrice = $this->crypto->getRate($asset->coin . 'BTC',true);
+                $coinPrice = $this->crypto->getRate($asset->coin . 'BTC', true);
+                $assetPrice = $coinPrice * $asset->value;
+                $totalPrice += $assetPrice;
+                $gain = round($assetPrice - $asset->buy, 2);
+                $totalGain += $gain;
+                $gainPercentage = round(($assetPrice - $asset->buy) / ($asset->buy / 100), 1);
+                $totalBuy += $asset->buy;
+                $table[] = [$asset->wallet()->name, $asset->coin, $asset->value, round($assetPrice, 2) . "€", $gain . "€ (" . $gainPercentage . "%)"];
             }
-            $assetPrice = $coinPrice*$asset->value;
+            else {
+                $table[] = [$asset->wallet()->name, $asset->coin, $asset->value, "", ""];
+            }
 
-            $totalPrice += $assetPrice;
-            $gain = round($assetPrice - $asset->buy,2);
-            $totalGain += $gain;
-            $gainPercentage = round(($assetPrice - $asset->buy)/($asset->buy/100),1);
 
-            $table[] = [$asset->wallet()->name, $asset->coin, $asset->value, round($assetPrice,2)."€", $gain."€ (".$gainPercentage."%)"];
         }
         $this->table(['wallet','coin','value','valueEUR','gain'], $table);
         echo "\nTotal:".round($totalPrice,2)."€\n";
-        echo "\nDaily Gain:".round($totalGain,2)."€\n";
+        echo "\nGain:".round($totalGain,2)."€\n";
         return Command::SUCCESS;
     }
 }
