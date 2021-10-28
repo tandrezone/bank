@@ -12,4 +12,8 @@ class Asset extends Model
     public function wallet() {
         return $this->belongsTo(Wallet::class)->first();
     }
+
+    public function storic() {
+        return $this->hasMany(Storic::class);
+    }
 }

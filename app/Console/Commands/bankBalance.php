@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Asset;
-use ccxt\binance;
+use App\Services\Crypto;
 use Illuminate\Console\Command;
 use function Symfony\Component\Translation\t;
 
@@ -23,13 +23,15 @@ class bankBalance extends Command
      */
     protected $description = 'Get my bank balance';
 
+    protected $crypto;
     /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Crypto $cypto)
     {
+        $this->crypto = $cypto;
         parent::__construct();
     }
 
@@ -40,35 +42,27 @@ class bankBalance extends Command
      */
     public function handle()
     {
-        $exchange = new binance();
-        $exchange->load_markets();
-        $assets = Asset::all();
-        $knownSymbols = ['UMA', 'ZRX','OMG','ANKR','1INCH','ETH','XRP','ADA','DOT','BCH'];
-        $tvalue = 0;
+        $assets = Asset::orderBy('wallet_id')->get();
         $table = [];
-        $ticker = $exchange->fetch_ticker('BTCEUR');
-        $eurbtc = $ticker['last'];
-
+        $totalPrice = 0;
+        $totalGain = 0;
         foreach ($assets as $asset) {
-            if(in_array($asset->coin,$knownSymbols)) {
-                $ticker = $exchange->fetch_ticker($asset->coin . 'BTC');
-                $btcoin =  $ticker['last'] . " \n";
-                $valEur = $eurbtc*$btcoin*$asset->value;
-                $tvalue = $tvalue+$valEur;
+            $coinPrice = 1;
+            if(in_array($asset->coin,crypto::KNOWN_SYMBOLS)) {
+                $coinPrice = $this->crypto->getRate($asset->coin . 'BTC',true);
             }
-            if($asset->coin == 'AMP'){
-                $tvalue = $tvalue+100;
-                $valEur = 100;
-            }
-            if($asset->coin == 'EUR'){
-                $tvalue = $tvalue+$asset->value;
-                $valEur = $asset->value;
-            }
-            $table[] = [$asset->wallet()->name, $asset->coin, $asset->value, round($valEur,2)."€"];
+            $assetPrice = $coinPrice*$asset->value;
+
+            $totalPrice += $assetPrice;
+            $gain = round($assetPrice - $asset->buy,2);
+            $totalGain += $gain;
+            $gainPercentage = round(($assetPrice - $asset->buy)/($asset->buy/100),1);
+
+            $table[] = [$asset->wallet()->name, $asset->coin, $asset->value, round($assetPrice,2)."€", $gain."€ (".$gainPercentage."%)"];
         }
-        $this->table(['wallet','coin','value','valueEUR'],
-        $table);
-        echo "\nTotal:".round($tvalue,2)."€\n";
+        $this->table(['wallet','coin','value','valueEUR','gain'], $table);
+        echo "\nTotal:".round($totalPrice,2)."€\n";
+        echo "\nDaily Gain:".round($totalGain,2)."€\n";
         return Command::SUCCESS;
     }
 }
