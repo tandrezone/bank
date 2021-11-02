@@ -6,7 +6,25 @@ use ccxt\binance;
 
 class Crypto
 {
-    const KNOWN_SYMBOLS = ['UMA', 'ZRX','OMG','ANKR','1INCH','ETH','XRP','ADA','DOT','BCH','ENJ','MATIC'];
+    const KNOWN_SYMBOLS = [
+        'UMA',
+        'ZRX',
+        'OMG',
+        'ANKR',
+        '1INCH',
+        'ETH',
+        'XRP',
+        'ADA',
+        'DOT',
+        'BCH',
+        'ENJ',
+        'MATIC',
+        'XLM',
+        'ALGO',
+        'CRV',
+        'MANA',
+        'LRC'
+    ];
     const CONVERSION_RATE_SYMBOL = 'BTCEUR';
 
     private $exchange;
