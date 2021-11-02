@@ -59,6 +59,7 @@ class bankBalance extends Command
                 $table[] = [$asset->wallet()->name, $asset->coin, $asset->value, round($assetPrice, 2) . "€", $gain . "€ (" . $gainPercentage . "%)"];
             }
             else {
+                $totalPrice += $asset->value;
                 $table[] = [$asset->wallet()->name, $asset->coin, $asset->value, "", ""];
             }
 
