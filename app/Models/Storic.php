@@ -8,8 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Storic extends Model
 {
     use HasFactory;
-
+    protected $fillable = [
+        'asset_id',
+        'set',
+        'gain_value',
+        'gain_percentage'
+    ];
     public function asset() {
-        return $this->belongsTo(Asset::class);
+        return $this->belongsTo(Asset::class)->first();
     }
 }

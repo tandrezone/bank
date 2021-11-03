@@ -23,7 +23,8 @@ class Crypto
         'ALGO',
         'CRV',
         'MANA',
-        'LRC'
+        'LRC',
+        'BTC'
     ];
     const CONVERSION_RATE_SYMBOL = 'BTCEUR';
 
@@ -38,6 +39,9 @@ class Crypto
     }
 
     public function getRate($symbol, $convert = false) {
+        if($symbol == 'BTCBTC') {
+            return $this->conversionRate;
+        }
         $ticker = $this->exchange->fetch_ticker($symbol);
         if($convert == false) {
             return $ticker['last'];

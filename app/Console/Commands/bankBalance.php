@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Asset;
+use App\Models\Storic;
 use App\Services\Crypto;
 use Illuminate\Console\Command;
 use function Symfony\Component\Translation\t;
@@ -42,7 +43,7 @@ class bankBalance extends Command
      */
     public function handle()
     {
-        $assets = Asset::orderBy('wallet_id')->get();
+        $assets = Asset::orderBy('wallet_id')->orderBy('coin')->get();
         $table = [];
         $totalPrice = 0;
         $totalGain = 0;
@@ -57,6 +58,18 @@ class bankBalance extends Command
                 $gainPercentage = round(($assetPrice - $asset->buy) / ($asset->buy / 100), 1);
                 $totalBuy += $asset->buy;
                 $table[] = [$asset->wallet()->name, $asset->coin, $asset->value, round($assetPrice, 2) . "€", $gain . "€ (" . $gainPercentage . "%)"];
+                $checkExists = false;
+                $set = date("Ymdh");
+                $check = Storic::where('set',$set)->where('asset_id',$asset->id)->first();
+                if(!$check) {
+                    Storic::create([
+                        'asset_id' => $asset->id,
+                        'set' => $set,
+                        'gain_value' => $gain,
+                        'gain_percentage' => $gainPercentage
+                    ]);
+                }
+
             }
             else {
                 $totalPrice += $asset->value;
