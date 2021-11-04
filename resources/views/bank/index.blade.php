@@ -35,7 +35,7 @@
             <td>{{$row[1]}}</td>
             <td>{{$row[2]}}</td>
             <td>@if($row[3]){{$row[3]}}€@endif</td>
-            <td style="text-align: right;">@if($row[4]){{$row[4]}}€ ({{$row[5]}}€)@endif</td>
+            <td style="text-align: right;">@if($row[4]){{$row[4]}}€ ({{$row[5]}}%)@endif</td>
         </tr>
     @endforeach
 </table>
