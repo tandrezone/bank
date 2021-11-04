@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>Crypto</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -27,10 +27,15 @@
         @endforeach
     </tr>
     @foreach($tableBody as $row)
-        <tr>
-            @foreach($row as $item)
-            <td>{{$item}}</td>
-            @endforeach
+        <tr
+            @if($row[4] < 0 && $row[1] != 'EUR' ) style="background-color: rgba(255,0,0,.2);"@endif
+            @if($row[4] > 0 && $row[1] != 'EUR' ) style="background-color: rgba(0,255,0,.2);"@endif
+        >
+            <td>{{$row[0]}}</td>
+            <td>{{$row[1]}}</td>
+            <td>{{$row[2]}}</td>
+            <td>@if($row[3]){{$row[3]}}€@endif</td>
+            <td style="text-align: right;">@if($row[4]){{$row[4]}}€ ({{$row[5]}}€)@endif</td>
         </tr>
     @endforeach
 </table>
