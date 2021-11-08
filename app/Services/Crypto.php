@@ -42,6 +42,7 @@ class Crypto
         if($symbol == 'BTCBTC') {
             return $this->conversionRate;
         }
+        
         $ticker = $this->exchange->fetch_ticker($symbol);
         if($convert == false) {
             return $ticker['last'];
