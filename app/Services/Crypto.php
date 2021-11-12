@@ -24,7 +24,12 @@ class Crypto
         'CRV',
         'MANA',
         'LRC',
-        'BTC'
+        'BTC',
+        'STORJ',
+        'NKN',
+        'LINK',
+        'CHZ',
+        'FET'
     ];
     const CONVERSION_RATE_SYMBOL = 'BTCEUR';
 
@@ -42,7 +47,7 @@ class Crypto
         if($symbol == 'BTCBTC') {
             return $this->conversionRate;
         }
-        
+
         $ticker = $this->exchange->fetch_ticker($symbol);
         if($convert == false) {
             return $ticker['last'];
